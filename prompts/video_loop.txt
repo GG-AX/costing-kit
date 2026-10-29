@@ -1,0 +1,7 @@
+# 루프 영상(같은 컷 → 같은 컷, 화면에서 반복 재생). 작은 패션 포즈를 잡았다 돌아온다. 출처: 1차 실전 run 015 (10/19 확정)
+# 시작·끝 프레임 = 같은 확정 컷. 앞뒤가 다 있으면 턴(video_turn_front/back)도 있다 — 화면은 어느 쪽이든 video/<c>_<키>_loop.mp4로 반복
+# {{HAIR_SHORT}} 머리 짧게(예: slicked-back ponytail) · {{SHOES}} 신발(예: black glossy knee-high boots) — 신발 고정 문장은 빼지 않는다(10/19 run 010: 중간에 부츠가 바뀜)
+# {{GARMENT}} · {{SWAY}} 옷이 움직임을 따르는 한 문장(예: The skirt sways naturally with the movement.)
+# '#'로 시작하는 줄은 run.py가 빼고 보낸다. {{ }}만 채우고 다른 문장은 고치지 않는다(SKILL 원칙 "프롬프트").
+# 모델 이름은 쓰지 않는다 — 모델은 작업마다 ②에서 고른다. 값은 refs/values/<스타일>_<키>.json에(run.py --values).
+Studio fashion shot, the camera does not move: no pan, no zoom, no shake. The light, the backdrop and her {{HAIR_SHORT}} stay the same. From her standing pose she moves into a modest, relaxed fashion pose - she shifts her weight onto one leg, turns her shoulders slightly to one side and tilts her head a little with a soft expression; her hands stay low near her sides - holds it for a moment, then smoothly returns to exactly her starting stance, arms relaxed at her sides. The movement is small and elegant, not dramatic. {{SWAY}} The {{GARMENT}} does not change at all: same length, same fullness, same colour and fabric. Her {{SHOES}} are not part of any change: they keep exactly the same shape, height, creases and shine from the first frame to the last. By the end she stands exactly as she began. One continuous take, no cut, no dissolve, no flash, no text.

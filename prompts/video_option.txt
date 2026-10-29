@@ -1,0 +1,9 @@
+# 옵션 전환 영상(기본 → 옵션 켜기 모션. 끄기 모션은 만들지 않는다). 같은 자리에서 작은 움직임 중에 옷만 바뀐다. 출처: 1차 실전 run 014 (10/19 확정)
+# 시작 프레임 = 기본 컷 · 끝 프레임 = 옵션 컷 (run.py --start-image/--end-image). 검수는 중간 프레임까지(video_post.py strip)
+# {{HAIR_SHORT}} 머리 짧게(예: slicked-back ponytail) · {{SHOES}} 신발(예: black glossy knee-high boots) — 신발 고정 문장은 빼지 않는다(10/19 run 010: 중간에 부츠가 바뀜)
+# {{OPTION_CHANGE}} 바뀌는 모습 1~2문장 + 과장 금지 1문장(예: Through the middle of the clip the skirt gradually becomes shorter and narrower: the hem rises steadily and the fullness reduces evenly, settling into the shape in the final frame. The skirt does not billow, flare, lift or swing out while it changes.) 치수 숫자는 쓰지 않는다
+# {{UNCHANGED}} 안 바뀌는 것 한 문장(예: The colour, the fabric, the bodice, the smocked waist, the belt and the sleeves never change.)
+# 연출(10/19): 완전 제자리는 "너무 가만히 서 있다"(run 010), 숨쉬기 동작은 "별로"(run 012) — 이 틀의 작은 체중 이동·어깨·고개가 승인됨
+# '#'로 시작하는 줄은 run.py가 빼고 보낸다. {{ }}만 채우고 다른 문장은 고치지 않는다(SKILL 원칙 "프롬프트").
+# 모델 이름은 쓰지 않는다 — 모델은 작업마다 ②에서 고른다. 값은 refs/values/<스타일>_<키>.json에(run.py --values).
+Studio fashion shot, the camera does not move: no pan, no zoom, no shake. The light, the backdrop and her {{HAIR_SHORT}} stay the same. She stays on the same spot with small, natural movements: she shifts her weight gently onto one leg and back, turns her shoulders a few degrees and back, and tilts her head slightly. Her hands stay relaxed at her sides and her feet stay where they are. {{OPTION_CHANGE}} {{UNCHANGED}} Her {{SHOES}} are not part of any change: they keep exactly the same shape, height, creases and shine from the first frame to the last. By the end she stands exactly as she began. One continuous take, no cut, no dissolve, no flash, no text.

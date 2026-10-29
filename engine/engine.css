@@ -1,0 +1,183 @@
+/* costing-kit 화면 엔진 v2.3 — 1920×1080 가로, 오리지널·옵션 나란히 비교(10/28 가로 보드 기준).
+   정확한 px로 그리고 창에 맞춰 줄인다. 옷 위에는 아무것도 얹지 않는다 — 조작은 오른쪽 패널. */
+:root{--ink:#1E232A;--mut:#767F8B;--line:rgba(30,35,42,.10);--accent:#1E232A;--save:#3D6B34;
+ --glass:rgba(255,255,255,.34);--glass-2:rgba(255,255,255,.62);--edge:rgba(255,255,255,.55);
+ --shadow:0 10px 34px rgba(40,44,52,.10)}
+*{box-sizing:border-box;word-break:keep-all;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;margin:0;overflow:hidden;background:#0E1116}
+/* 터치 모니터 — 길게 눌러도 선택되지 않고, 두 번 두드려도 확대되지 않는다 */
+body{display:flex;align-items:center;justify-content:center;
+ -webkit-user-select:none;user-select:none;touch-action:manipulation;overscroll-behavior:none}
+#fit{width:1920px;height:1080px;transform-origin:center center;flex:none}
+.app{width:1920px;height:1080px;display:grid;grid-template-rows:96px 1fr;grid-template-columns:1fr 600px;
+ position:relative;isolation:isolate;background:linear-gradient(168deg,#F6F2EE 0%,#ECEDF1 48%,#F3EDE7 100%);
+ color:var(--ink);font:16px/1.5 "Instrument Sans","Malgun Gothic","Segoe UI",sans-serif;overflow:hidden}
+.app > .top,.app > .stage,.app > .bot{position:relative;z-index:1}
+/* 앱 바탕 — 지금 컷을 크게 흐려 깔면 유리판에 옷 색이 비친다 */
+#wash{position:absolute;inset:-8%;z-index:0;pointer-events:none;background-size:cover;background-position:center 30%;
+ filter:blur(58px) saturate(1.45) brightness(1.06);opacity:.85;transition:background-image .6s ease}
+
+/* 유리판(.top·.cell·.bot)은 반투명만 — backdrop-filter는 뒤가 빠르게 바뀔 때 Chrome에서 박스 테두리가 깜빡였다(10/29). 뒤가 이미 흐린 wash·단색이라 겉보기 차이 없음 */
+.top{grid-column:1/-1;background:var(--glass);border-bottom:1px solid var(--line);box-shadow:inset 0 1px 0 var(--edge);padding:0 34px;display:flex;
+ justify-content:space-between;align-items:center;gap:20px}
+/* 세로 flex 기본 stretch면 width:auto 로고가 부제 너비만큼 늘어난다 */
+.tl{display:flex;flex-direction:column;justify-content:center;align-items:flex-start;gap:9px;min-width:0}
+.tl.wide{flex-direction:row;align-items:center;gap:26px}   /* 키 큰 워드마크는 글줄을 옆으로 */
+.brandlogo{height:34px;width:auto;display:block;opacity:.95}
+.brandname{font-size:30px;font-weight:800;letter-spacing:.18em;line-height:1}
+.sub{font-size:13px;letter-spacing:.2em;color:var(--mut);margin:0;white-space:nowrap}
+.rt{display:flex;align-items:center;gap:18px}
+.creditlogo{height:44px;width:auto;display:block;opacity:.88}
+.ggmark{position:absolute;right:14px;bottom:11px;font-size:10px;letter-spacing:.14em;color:var(--mut);opacity:.72;white-space:nowrap}
+
+.stage{min-height:0;background:#C8C1BA;overflow:hidden;position:relative}
+/* 무대 바탕 = 지금 컷 테두리의 평균색 한 가지(engine.js가 --bgc로). 칸 가장자리 띠도 같은 색이라 이음매가 없다.
+   색이 바뀔 때 칸 페이드(.5s)와 같이 바뀐다 — 바탕만 먼저 바뀌면 칸 테두리가 드러났다 */
+@property --bgc{syntax:"<color>";inherits:true;initial-value:#E3CCC6}
+.stage{--bgc:#E3CCC6;transition:--bgc .6s ease}
+#stagebg{position:absolute;inset:0;z-index:0;background:var(--bgc)}
+.stage img,.stage video{width:100%;height:100%;object-fit:contain;display:block}
+/* 칸 안 컷은 3% 크게 그려 가장자리를 칸 밖(overflow:hidden)으로 민다 — 1080×1610처럼 16의 배수가 아닌 영상은
+   디코더가 붙인 여분 픽셀이 축소할 때 오른쪽·아래로 1px 어두운 선으로 샜다(10/29 사용자 캡처). 정지 컷도 같게 키워 이음이 맞게 */
+.pane img,.pane video{transform:scale(1.03)}
+/* 나란히 비교 — 옵션 0개면 오리지널 한 칸이 가운데, 켜면 오리지널은 왼쪽·옵션은 그 뒤에서 오른쪽으로 갈라져 나온다.
+   칸은 컷과 같은 2:3. 가장자리는 바탕색 → 투명 띠를 위에 덮어 녹인다(가로 60·세로 30 — 28px로는 경계가 보였다).
+   mask-image로 녹이면 Chrome·Edge가 영상에는 mask를 안 먹여 칼선이 보였다(10/29 사용자 캡처) — 그래서 덮는다 */
+.panes{position:absolute;left:0;right:0;top:16px;height:760px;display:flex;justify-content:center;gap:40px;z-index:1}
+/* 층마다 clip-path:inset(0) — 전환 중 blur(16px)로 흐려진 영상이 칸 밖으로 번지면 칼선이 보였다(10/29 캡처 2).
+   사각 잘라내기는 영상에도 확실히 먹는다(mask는 영상에 안 먹을 때가 있음). 칸이 아니라 층을 잘라야 덮개 띠가 경계 밖까지 덮는다 */
+.pane{position:relative;flex:none;width:506px;height:760px;transition:transform .7s cubic-bezier(.22,.9,.3,1),opacity .5s ease}
+/* 덮개 띠는 칸보다 6px 크게, 바깥 8px은 불투명 바탕색 — 잘라낸 경계 픽셀이 반투명하게 겹치면 안쪽 영상이 1px 흰 선으로 비쳤다(10/29 캡처 4) */
+.pane::after{content:"";position:absolute;inset:-6px;z-index:5;pointer-events:none;
+ background:linear-gradient(to right,var(--bgc) 0,var(--bgc) 8px,transparent 66px,transparent calc(100% - 66px),var(--bgc) calc(100% - 8px),var(--bgc) 100%),
+   linear-gradient(to bottom,var(--bgc) 0,var(--bgc) 8px,transparent 36px,transparent calc(100% - 36px),var(--bgc) calc(100% - 8px),var(--bgc) 100%)}
+#orig{z-index:2;transform:translateX(273px)}
+#frame{z-index:1;transform:translateX(-273px);opacity:0;pointer-events:none}
+.stage.cmp #orig,.stage.cmp #frame{transform:none}
+.stage.cmp #frame{opacity:1;pointer-events:auto}
+.layer{position:absolute;inset:0;clip-path:inset(0);display:flex;align-items:center;justify-content:center;
+ opacity:0;transform:scale(1.014);filter:blur(16px) saturate(1.12);
+ transition:opacity .52s cubic-bezier(.4,0,.2,1),transform .74s cubic-bezier(.22,.9,.3,1),filter .52s cubic-bezier(.4,0,.2,1)}
+/* 다 바뀐 뒤에는 filter·transform을 none으로 — blur(0) saturate(1)이라도 남겨 두면 Chrome이 영상을 따로 그려 칸 테두리가 칼선으로 보였다
+   (10/29 사용자 캡처, 진단 페이지에선 안 보임). will-change도 같은 이유로 두지 않는다 */
+.layer.on{opacity:1;transform:none;filter:none}
+.layer.out{opacity:0;transform:scale(.994);filter:blur(16px) saturate(1.12)}
+.pending{color:#5C6672;font-size:24px;text-align:center;line-height:1.9;padding:0 40px}
+.pending b{display:block;color:#2A323C;font-size:32px;margin-bottom:12px}
+
+/* 칸 아래 설명 — 칸과 같이 움직인다 */
+.cmpband{position:absolute;left:0;right:0;top:792px;display:flex;justify-content:center;align-items:flex-start;gap:40px;z-index:3}
+.cell{position:relative;flex:none;width:506px;display:flex;flex-direction:column;gap:8px;padding:14px 22px 18px;border-radius:16px;
+ background:var(--glass-2);border:1px solid var(--edge);box-shadow:var(--shadow);transition:transform .7s cubic-bezier(.22,.9,.3,1),opacity .5s ease}
+#cellA{transform:translateX(273px)}
+#cellB{transform:translateX(-273px);opacity:0}
+.stage.cmp #cellA,.stage.cmp #cellB{transform:none;opacity:1}
+.cell .tag{display:block;font-size:12px;font-weight:800;letter-spacing:.16em;color:var(--mut)}
+/* 조합은 한 줄에 하나씩 — 「+」로 이으면 세 개일 때 문장이 엉킨다 */
+.cell .nm{display:block;font-size:16px;font-weight:700;line-height:1.3;margin-top:3px;white-space:pre-line}
+/* 이름 옆에 절감액 — 아래로 쌓으면 옵션 3개 조합에서 칸이 화면 밖으로 나갔다 */
+.cell .row{display:flex;align-items:flex-end;gap:16px}
+.cell .txt{flex:1;min-width:0}
+.price{font-size:15px;font-weight:700;color:var(--mut);white-space:nowrap;text-align:right;font-variant-numeric:tabular-nums}
+.price:empty{display:none}
+.arrow{position:absolute;left:50%;top:38px;transform:translate(-50%,-50%);font-size:26px;font-weight:800;color:var(--mut);
+ opacity:0;transition:opacity .5s ease .25s}
+.stage.cmp .arrow{opacity:1}
+.saver{display:flex;flex-direction:column;align-items:flex-end}
+.saver[hidden]{display:none!important}
+.saver .t{font-size:12px;font-weight:800;letter-spacing:.16em;color:var(--mut);white-space:nowrap}
+.total{font-size:44px;line-height:1.05;font-weight:900;color:var(--save);letter-spacing:-.5px;font-variant-numeric:tabular-nums;white-space:nowrap}
+.total.zero{color:rgba(30,35,42,.32)}
+.bar{position:absolute;left:22px;right:22px;bottom:8px;height:5px;border-radius:999px;background:rgba(30,35,42,.08);overflow:hidden}
+.bar i{display:block;height:100%;width:0;border-radius:999px;background:linear-gradient(90deg,#8FBF7A,var(--save));
+ transition:width .45s cubic-bezier(.3,.9,.35,1)}
+/* 떠오르는 금액은 칸 위 빈 바닥에서 — 칸 안 글자와 겹치지 않게 */
+.fly{position:absolute;right:26px;bottom:calc(100% + 8px);font-size:22px;font-weight:900;color:var(--save);opacity:0;pointer-events:none}
+@keyframes flyup{0%{opacity:0;transform:translateY(8px)}25%{opacity:1}100%{opacity:0;transform:translateY(-36px)}}
+.fly.go{animation:flyup .9s ease-out}
+
+/* 옵션을 켜면 지폐가 옵션 칸에서 절감액 자리로 모인다 — 나가는 돈이 아니라 돌아오는 돈 */
+.fx{position:absolute;inset:0;pointer-events:none;overflow:hidden;z-index:6}
+.bill{position:absolute;width:96px;height:50px;border-radius:5px;background:linear-gradient(135deg,#8FB37B 0%,#6E9A5E 45%,#557A49 100%);
+ border:2px solid #46683C;box-shadow:0 6px 16px rgba(20,40,16,.28);will-change:transform,opacity}
+.bill::before{content:"";position:absolute;inset:5px;border:1px solid rgba(255,255,255,.45);border-radius:3px}
+.bill::after{content:"$";position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#EFF6EA;
+ font:900 24px/1 "Instrument Sans",sans-serif;text-shadow:0 1px 2px rgba(0,0,0,.25)}
+@keyframes billin{
+ 0%{opacity:0;transform:translate(0,0) rotate(var(--r0)) scale(.55)}
+ 18%{opacity:1;transform:translate(calc(var(--dx)*.15),calc(var(--dy)*.1)) rotate(var(--r0)) scale(1)}
+ 82%{opacity:1}
+ 100%{opacity:0;transform:translate(var(--dx),var(--dy)) rotate(var(--r1)) scale(.32)}}
+.pot{position:absolute;transform:translateX(-50%);display:flex;align-items:center;gap:10px;padding:12px 22px;border-radius:999px;
+ background:rgba(255,255,255,.94);box-shadow:0 8px 24px rgba(20,40,16,.22);font:800 22px/1 "Instrument Sans","Malgun Gothic",sans-serif;
+ color:var(--save);opacity:0;pointer-events:none}
+@keyframes potpop{0%{opacity:0;transform:translateX(-50%) translateY(10px) scale(.9)}20%{opacity:1;transform:translateX(-50%) translateY(0) scale(1)}
+ 75%{opacity:1}100%{opacity:0;transform:translateX(-50%) translateY(-4px) scale(1)}}
+
+/* 디테일 — 무대 가운데 카드, 전·후를 나란히 */
+.detail{position:absolute;inset:0;z-index:20;display:flex;align-items:center;justify-content:center;
+ background:rgba(245,238,230,.88);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+.dcard{display:flex;flex-direction:column;align-items:center;gap:14px;padding:22px 24px 18px;max-width:92%;background:#f8f4ee;
+ border:1px solid #ded5ca;border-radius:14px;box-shadow:0 18px 60px #59463433}
+.dcard h3{margin:0;font-size:18px;letter-spacing:.06em}
+.dpair{display:flex;gap:22px;align-items:flex-start}
+.dpair figure{margin:0;display:flex;flex-direction:column;align-items:center;gap:8px}
+.dpair img{display:block;width:auto;height:auto;max-width:540px;max-height:600px;object-fit:contain;border-radius:8px}
+.dpair figcaption{font-size:13px;font-weight:800;letter-spacing:.16em;color:var(--mut)}
+.dpair figure.after figcaption{color:var(--save)}
+.dpair figure.one img{max-width:1100px}
+.dcard button{font:inherit;border:1px solid #b8a793;background:transparent;border-radius:20px;padding:8px 20px;cursor:pointer;min-height:44px}
+
+.bot{background:var(--glass);border-left:1px solid var(--line);box-shadow:inset 1px 0 0 var(--edge);padding:22px 26px 40px;display:flex;flex-direction:column;
+ gap:16px;min-height:0;overflow:hidden}
+.lbl{font-size:14px;font-weight:800;letter-spacing:.16em;color:var(--mut)}
+.hint{font-size:14px;color:#A3AEBB}
+/* 스타일 격자 — 판 하나에 실선으로만 가른다. 고른 칸만 살아난다 */
+.grid{display:grid;grid-template-columns:repeat(var(--cols,2),1fr);gap:1px;background:rgba(30,35,42,.09);border-radius:18px;overflow:hidden;
+ box-shadow:0 1px 0 var(--edge) inset,0 6px 20px rgba(40,44,52,.07);flex:none}
+.sty{border:0;border-radius:0;background:rgba(255,255,255,.40);padding:14px 13px 14px 17px;font:inherit;text-align:left;cursor:pointer;
+ line-height:1.25;min-width:0;position:relative;color:rgba(30,35,42,.62);transition:background .18s,color .18s,box-shadow .18s}
+.sty b{display:block;font-size:19px;font-weight:800;letter-spacing:.02em}
+.sty small{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;font-size:13px;color:var(--mut);margin-top:4px;overflow:hidden;
+ white-space:normal;overflow-wrap:break-word}
+.sty[aria-selected="true"],.opt[aria-pressed="true"]{color:var(--ink);
+ background:linear-gradient(158deg,rgba(255,255,255,.97) 0%,rgba(255,255,255,.72) 100%);
+ box-shadow:inset 0 1px 0 rgba(255,255,255,.95),0 8px 20px rgba(40,44,52,.16)}
+/* 어디가 켜졌는지는 왼쪽 먹선 한 줄로. 절감 초록은 금액에만 쓴다 — 아낀 돈이지 경고가 아니다 */
+.sty[aria-selected="true"]::before,.opt[aria-pressed="true"]::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--ink)}
+.crow{display:flex;align-items:center;gap:16px;padding-top:14px;border-top:1px solid var(--line)}
+.chips{display:flex;gap:12px;flex:none}
+.chip{appearance:none;width:44px;height:44px;border-radius:50%;padding:0;flex:none;border:3px solid #fff;
+ box-shadow:0 0 0 2px rgba(30,35,42,.22);background-size:cover;background-position:center}
+.chip[aria-pressed="true"]{border-color:var(--accent);box-shadow:0 0 0 3px #CDE4F6}
+button.chip{cursor:pointer}
+.cname{font-size:18px;font-weight:700;overflow-wrap:break-word;min-width:0}
+.ov{display:flex;flex-direction:column;gap:10px;padding-top:16px;border-top:1px solid var(--line);min-height:0}
+.hdr{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.side{margin-left:auto;display:flex;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--glass-2)}
+.side[hidden]{display:none!important}
+.side button{border:0;background:transparent;font:inherit;font-size:16px;font-weight:800;color:var(--mut);padding:8px 22px;min-height:44px;cursor:pointer}
+.side button[aria-pressed="true"]{background:var(--ink);color:#F6F4F1}
+.opts{display:flex;flex-direction:column;gap:8px;overflow:auto;min-height:0}
+.opt{flex:0 0 auto;display:flex;gap:11px;align-items:center;text-align:left;border:1px solid var(--edge);background:rgba(255,255,255,.55);
+ border-radius:12px;padding:12px 14px 12px 17px;position:relative;overflow:hidden;font:inherit;color:var(--ink);cursor:pointer;
+ box-shadow:var(--shadow);transition:background .18s,box-shadow .18s}
+.box{width:24px;height:24px;flex:none;border:3px solid rgba(30,35,42,.26);border-radius:7px;position:relative;background:rgba(255,255,255,.7)}
+.one .box{border-radius:50%}
+.opt[aria-pressed="true"] .box{border-color:var(--ink);background:var(--ink)}
+.opt[aria-pressed="true"] .box::after{content:"";position:absolute;left:6px;top:1px;width:6px;height:12px;border:solid #fff;
+ border-width:0 3px 3px 0;transform:rotate(45deg)}
+.opt .body{flex:1;min-width:0}
+.opt .lb{display:block;font-size:18px;font-weight:700;line-height:1.25}
+.opt .mt{display:block;font-size:13px;color:var(--mut);margin-top:3px}
+.opt .amt{flex:none;font-size:19px;font-weight:800;color:rgba(30,35,42,.32);white-space:nowrap;font-variant-numeric:tabular-nums}
+.opt[aria-pressed="true"] .amt{color:var(--save)}
+.zoombtn{flex:none;width:44px;height:44px;margin-left:10px;border-radius:50%;border:1px solid var(--line);background:rgba(255,255,255,.72);
+ color:var(--mut);display:grid;place-items:center;cursor:zoom-in;transition:background .18s,color .18s}
+.zoombtn:hover,.zoombtn:focus-visible{background:var(--ink);color:#fff;border-color:var(--ink)}
+.reset{align-self:stretch;border:1px solid var(--edge);background:var(--glass-2);border-radius:12px;padding:12px 18px;min-height:44px;
+ font:inherit;font-size:15px;font-weight:700;color:var(--mut);cursor:pointer}
+
+/* 캡처(?shot)·움직임 줄이기 — 전환 없이 바로 */
+.noanim *,.noanim *::before,.noanim *::after{transition:none!important;animation:none!important}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{transition-duration:.01s!important;animation-duration:.01s!important}}

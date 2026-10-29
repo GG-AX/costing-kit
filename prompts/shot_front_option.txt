@@ -1,0 +1,17 @@
+# 옵션 착샷(앞만 3:4) — 승인된 기본 컷과 같은 틀로 새로 생성, 바뀌는 곳 한 군데. 출처: 1차 실전 run 009 (10/19 확정)
+# 참조(--image 순서): 1 마네킹 정면 칸 · 2 승인된 기본 컷 · 3 옵션 착장(원본 완성 사진 등) · 4 옵션 플랫 · 5 상반신 디테일 확대 · 6 신발
+# {{GARMENT}} 옷 종류(dress, blouse …) · {{MATERIAL}} 원단 - 혼용률: 촉감·광택·표면. Not …(헷갈리기 쉬운 원단)
+# {{MODEL_FEATURES}} 얼굴 특징(예: dark brown eyes, thick straight dark eyebrows, full lips) · {{MODEL_HAIR}} 머리(예: dark brown hair slicked straight back into a long low ponytail)
+# {{KEEP_PARTS}} 그대로 둘 구성(예: point collar, button placket, … rolled long sleeves) · {{CHANGE}} 바뀌는 곳 한 군데(예: the skirt: copy the skirt from references 3 and 4 - knee-length, the hem ends just below the knee, with less fullness and fewer gathers than reference 2. Ignore the bag and the hand-in-pocket pose in reference 3.)
+# 치수를 글로 세게 쓰지 않는다(원칙 "치수") · {{DETAIL_PARTS}} 확대 참조 부위
+# {{SHOES}} 신발(예: black glossy patent leather knee-high boots) · {{SHOES_NOTE}} 신발 위치 덧붙임(예: ", shaft ending just below the knee, hidden under the midi skirt hem", 없으면 빈칸) · {{SHOES_WORD}} 짧게(boots, shoes)
+# {{EXCLUDE}} 빼는 것
+# '#'로 시작하는 줄은 run.py가 빼고 보낸다. {{ }}만 채우고 다른 문장은 고치지 않는다(SKILL 원칙 "프롬프트").
+# 모델 이름은 쓰지 않는다 — 모델은 작업마다 ②에서 고른다. 값은 refs/values/<스타일>_<키>.json에(run.py --values).
+CRITICAL MATERIAL: the {{GARMENT}} is {{MATERIAL}}
+E-commerce product photo for a women's fashion website, shot on a medium-format digital camera, full body, front view only, 3:4 portrait.
+Reference 1 is a mannequin pose guide and reference 2 is the approved base photo of this series: copy reference 2's woman, pose, figure scale, framing, camera, lighting and backdrop exactly - standing symmetrically straight on, facing the camera, head upright and level, arms hanging relaxed at her sides, legs straight, feet close. Ignore the mannequin's blank head, its gray clothing and its beige backdrop.
+Keep her exact face, {{MODEL_FEATURES}}, skin tone, body proportions and {{MODEL_HAIR}}. Same real person; do not change, smooth or beautify her. {{EXCLUDE}}
+The {{GARMENT}} is the same {{GARMENT}} as in reference 2 - {{KEEP_PARTS}} - with ONE change, {{CHANGE}} Reference 5 shows {{DETAIL_PARTS}} up close - copy those details exactly.
+Shoes: the exact {{SHOES}} from reference 6{{SHOES_NOTE}}, as in reference 2.
+Full head and {{SHOES_WORD}} visible with margins, head top at 5% and soles at 96% of image height. Light gray seamless studio backdrop, no visible floor seam, soft even key light, soft floor shadow, true-to-life colour, eye-level camera. Real unretouched skin. No text, no labels.

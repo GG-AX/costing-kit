@@ -1,0 +1,19 @@
+# 옵션 착샷 — 같은 틀로 새로 생성(편집보다 일관적). 출처: 10/15 스틸 보드 통과본
+# 참조(--image 순서): 1 시트 앞 칸 · 2 시트 뒤 칸 · 3 옵션 렌더 앞 · 4 옵션 렌더 뒤
+# {{GARMENT}} 옷 종류(blouse, dress …) · {{MATERIAL}} 원단 이름 - 혼용률, gsm: 촉감·광택·표면. Not …(헷갈리기 쉬운 원단 나열)
+# {{MODEL_FEATURES}} 모델 얼굴 특징(예: freckles, light grey-green eyes) · {{MODEL_HAIR}} 머리(예: dark brown hair in a low bun) — sheet.txt와 같은 말로
+# {{PATTERN}} 무늬 종류(예: plaid) · {{PARTS}} 그대로 베낄 부위(예: belt, cuffs) · {{PATTERN_KEEP}} 무늬 유지 한 문장(예: Keep the navy multi-plaid with its exact colours, line widths and placement.)
+# {{STYLE}} 스타일 코드 · {{DETAILS}} 디테일표 한 줄 + 옵션 위치 한 줄(예: LENGTH: the skirt is knee-length - the hem ends just below the knee, exactly as in the render.). 치수를 글로 세게 쓰지 않는다(원칙 "치수")
+# {{SHOES}} 신발 · {{EXCLUDE}} 빼는 것(예: No bag, no jewelry, no earrings.)
+# '#'로 시작하는 줄은 run.py가 빼고 보낸다. {{ }}만 채우고 다른 문장은 고치지 않는다(SKILL 원칙 "프롬프트").
+# 모델 이름은 쓰지 않는다 — 모델은 작업마다 ②에서 고른다. 값은 refs/values/<스타일>_<키>.json에(run.py --values).
+CRITICAL MATERIAL: the {{GARMENT}} is {{MATERIAL}}
+E-commerce product photo for a women's fashion website, shot on a medium-format digital camera, full body. One 4:3 landscape canvas showing the SAME woman twice side by side at identical scale on one shared floor line: LEFT = front view, RIGHT = back view.
+Reference 1 (front) and reference 2 (back) supply ONLY the woman's identity: her exact face, features, {{MODEL_FEATURES}}, skin tone, body proportions and {{MODEL_HAIR}}. Same real person; do not change, smooth or beautify her. Ignore her gray bodysuit entirely. Do NOT copy the stiff reference-sheet stance of references 1 and 2 - use the pose described below.
+Reference 3 (front) and reference 4 (back) supply the exact {{GARMENT}} rendered on a mannequin: construction, fit, proportions, volume, length, colour, {{PATTERN}} and surface. Put that exact {{GARMENT}} on her. Copy it as drawn - silhouette, fullness, length, seams, hem line, {{PARTS}}. Do not interpret, stylise, sharpen or soften it, and do not add or remove any button, slit, seam or panel. {{PATTERN_KEEP}}
+{{STYLE}} FIXED DETAILS (change nothing listed here): {{DETAILS}}
+She wears the exact {{SHOES}} from references 1 and 2, bare legs.
+Front view: woman standing symmetrically straight on, facing the camera, arms relaxed slightly clear of the waist so the side panels stay visible, legs straight, feet close, calm natural expression with a slight smile.
+Back view: photographed from directly behind, standing straight, arms relaxed slightly clear of the waist, legs straight, feet close.
+Exactly the same fixed pose in every photo of this series. {{EXCLUDE}}
+Full head and shoes visible with margins in both views, head top at 5% and soles at 96% of image height. Light gray seamless studio backdrop, RGB 236/236/236, no visible floor seam or horizon line, large soft key light from the front-left with gentle falloff, soft floor shadow, true-to-life colour, eye-level camera. Real unretouched skin. No text, no labels, no dividing line.

@@ -1,0 +1,5 @@
+# 턴 앞쪽 반(앞 → 뒤). video_turn_back과 이어붙여 한 바퀴(video_post.py). 출처: 9월 영상 보드 도구 턴앞 (09/18 방향 실측 후)
+# 시작 프레임 = 앞 컷, 끝 프레임 = 뒤 컷. 방향은 화면 기준으로 못 박는다(해부학 용어는 방향이 제각각). 채울 칸 없음
+# '#'로 시작하는 줄은 run.py가 빼고 보낸다. {{ }}만 채우고 다른 문장은 고치지 않는다(SKILL 원칙 "프롬프트").
+# 모델 이름은 쓰지 않는다 — 모델은 작업마다 ②에서 고른다. 값은 refs/values/<스타일>_<키>.json에(run.py --values).
+Locked-off studio shot. The camera does not move at all: no pan, no zoom, no dolly, no shake. The light, the backdrop and her hairstyle do not change. No cut, no dissolve, no flash, no text, no on-screen graphics. She starts facing the camera and turns on the spot to end with her back to the camera, at an even, unhurried speed, in one single unbroken rotation that never reverses. At the halfway point of this clip she is in profile with her face turned toward the LEFT-HAND EDGE of the frame — the camera sees her right cheek, her right ear and the right side of her nose, and her nose points to the left of the picture. At no point in this clip does her face turn toward the right-hand edge of the frame. Her feet stay in place, her posture stays upright and her arms stay relaxed at her sides. Nothing else changes.

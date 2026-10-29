@@ -1,0 +1,18 @@
+# 옵션 컷에 무늬 입히기 — 확정 오리지널 컷을 무늬 참조로(4장 무늬 크기·색·배치 동일, #78). 출처: WT13_artwork_Bref_o3.txt (10/15 통과, o1도 같은 틀)
+# 참조(--image 순서): 1 승인된 옵션 흰 컷 · 2 아트워크 1리피트 · 3 크기 참고 · 4 확정 오리지널 무늬 컷
+# 옵션 부위가 오리지널과 다르면 참조 4의 그 부위를 블러로 가린다(#83). 문장으로는 구조 유입을 못 막는다(#79)
+# {{OUTFIT_REST}} 그대로 둘 나머지 · {{CONSTRUCTION}} 그대로 둘 구조(예: ruffles, short placket and buttons, and the same SHORTER flutter sleeves)
+# {{ARTWORK}} 바탕·모티프 색 · {{SCALE_REF}} 크기 참고 설명(예: the artwork square drawn on the back of the shirt sketch): the largest paisleys are about one third of the body width)
+# {{GARMENT}} · {{CONSTRUCTION_PARTS}} 참조 1을 따를 구조 부위(예: placket, ruffles, buttons and sleeve length)
+# {{FABRIC_FEEL}} 원단 비침·두께(예: a thin, slightly translucent cotton-rayon voile - a hint of skin tone shows through where the fabric lies close to the body, and layered ruffles look a little denser) · {{FABRIC_NAME}} 원단 이름(예: voile)
+# '#'로 시작하는 줄은 run.py가 빼고 보낸다. {{ }}만 채우고 다른 문장은 고치지 않는다(SKILL 원칙 "프롬프트").
+# 모델 이름은 쓰지 않는다 — 모델은 작업마다 ②에서 고른다. 값은 refs/values/<스타일>_<키>.json에(run.py --values).
+Reference 1 is the approved photo. Keep it identical - the same woman, face, hair, pose, hands, {{OUTFIT_REST}}, background, lighting, framing and camera - and keep the shirt's construction pixel-exact: the same shape, fit, folds, {{CONSTRUCTION}}. Change ONLY the fabric: it is now a printed fabric.
+Reference 2 is the artwork (one full repeat): {{ARTWORK}}. Reference 3 shows the intended print SCALE ({{SCALE_REF}}). Do not shrink or densify the motifs.
+Reference 4 is the APPROVED ORIGINAL photo of the same {{GARMENT}} in this exact printed fabric. Match its print EXACTLY - the same motif size and scale, the same colours and density, the same translucency and fabric look - so that both photos clearly show the same fabric. Take ONLY the print and fabric from reference 4: the {{GARMENT}}'s construction - {{CONSTRUCTION_PARTS}} - must follow reference 1, not reference 4.
+MAKE IT LOOK LIKE A REAL PHOTOGRAPHED PRINTED GARMENT, not a pattern pasted on top:
+- the print is dyed into {{FABRIC_FEEL}};
+- the print follows every fold, gather and ruffle: it compresses and breaks inside the gathers under the yoke and in the ruffles, curves over the bust and sleeves, and is cut by seams and hems;
+- the existing light and shadow of reference 1 stay on top of the print: motifs are darker inside folds and in the shaded side, lighter on highlights;
+- printed-on-fabric colours, slightly softer and less saturated than the digital artwork, matte, with the fine weave of {{FABRIC_NAME}} visible up close; edges of the motifs are crisp but not vector-sharp.
+Real unretouched skin, true-to-life colour. No text, no labels.

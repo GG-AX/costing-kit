@@ -1,0 +1,7 @@
+{
+  "name": "costing-kit",
+  "version": "1.1.0",
+  "description": "코스팅 옵션 보드 키트 — 바이어 원본으로 AI 착샷, 오리지널·옵션을 나란히 비교하는 단일 HTML 보드",
+  "author": { "name": "GG AX Team" },
+  "skills": ["./", "./skills/"]
+}
